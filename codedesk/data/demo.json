@@ -1,0 +1,235 @@
+{
+    "projects": [
+        {
+            "id": "proj_1",
+            "name": "MyShop",
+            "description": "E-commerce platform with modern features",
+            "technology": "PHP, MySQL, JavaScript",
+            "status": "active",
+            "created": "2024-01-15",
+            "updated": "2024-03-20",
+            "tags": ["ecommerce", "php", "mysql"]
+        },
+        {
+            "id": "proj_2",
+            "name": "UserDesk",
+            "description": "Customer support ticketing system",
+            "technology": "Node.js, MongoDB, React",
+            "status": "active",
+            "created": "2024-02-01",
+            "updated": "2024-03-18",
+            "tags": ["support", "nodejs", "mongodb"]
+        },
+        {
+            "id": "proj_3",
+            "name": "BalleBot",
+            "description": "Telegram bot for automation",
+            "technology": "Python, Redis, PostgreSQL",
+            "status": "development",
+            "created": "2024-02-20",
+            "updated": "2024-03-19",
+            "tags": ["bot", "python", "automation"]
+        },
+        {
+            "id": "proj_4",
+            "name": "Portfolio",
+            "description": "Personal portfolio website",
+            "technology": "HTML, CSS, JavaScript",
+            "status": "completed",
+            "created": "2023-12-01",
+            "updated": "2024-01-10",
+            "tags": ["portfolio", "frontend", "static"]
+        }
+    ],
+    "snippets": [
+        {
+            "id": "snip_1",
+            "title": "PHP Database Connection",
+            "language": "php",
+            "code": "<?php\n$host = 'localhost';\n$dbname = 'myshop';\n$username = 'root';\n$password = '';\n\ntry {\n    $pdo = new PDO(\n        \"mysql:host=$host;dbname=$dbname;charset=utf8\",\n        $username,\n        $password,\n        [\n            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,\n            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC\n        ]\n    );\n} catch (PDOException $e) {\n    die(\"Connection failed: \" . $e->getMessage());\n}\n?>",
+            "category": "Database",
+            "favorite": true,
+            "created": "2024-01-10"
+        },
+        {
+            "id": "snip_2",
+            "title": "JavaScript Fetch API Wrapper",
+            "language": "javascript",
+            "code": "async function apiRequest(url, options = {}) {\n    const defaultOptions = {\n        headers: {\n            'Content-Type': 'application/json',\n            'Accept': 'application/json'\n        }\n    };\n\n    const config = { ...defaultOptions, ...options };\n\n    if (options.body && typeof options.body === 'object') {\n        config.body = JSON.stringify(options.body);\n    }\n\n    try {\n        const response = await fetch(url, config);\n        const data = await response.json();\n\n        if (!response.ok) {\n            throw new Error(data.message || 'Request failed');\n        }\n\n        return { success: true, data };\n    } catch (error) {\n        return { success: false, error: error.message };\n    }\n}",
+            "category": "HTTP",
+            "favorite": true,
+            "created": "2024-02-05"
+        },
+        {
+            "id": "snip_3",
+            "title": "Python JSON Parser",
+            "language": "python",
+            "code": "import json\nfrom typing import Any, Dict\n\ndef parse_json_file(filepath: str) -> Dict[str, Any]:\n    \"\"\"Parse JSON file and return as dictionary.\"\"\"\n    try:\n        with open(filepath, 'r', encoding='utf-8') as f:\n            data = json.load(f)\n        return data\n    except FileNotFoundError:\n        print(f\"File not found: {filepath}\")\n        return {}\n    except json.JSONDecodeError as e:\n        print(f\"Invalid JSON: {e}\")\n        return {}\n\ndef save_json_file(data: Dict[str, Any], filepath: str, indent: int = 2) -> bool:\n    \"\"\"Save dictionary as formatted JSON file.\"\"\"\n    try:\n        with open(filepath, 'w', encoding='utf-8') as f:\n            json.dump(data, f, indent=indent, ensure_ascii=False)\n        return True\n    except IOError as e:\n        print(f\"Error writing file: {e}\")\n        return False",
+            "category": "Utilities",
+            "favorite": false,
+            "created": "2024-02-15"
+        },
+        {
+            "id": "snip_4",
+            "title": "CSS Flexbox Center",
+            "language": "css",
+            "code": "/* Perfect centering with Flexbox */\n.center-container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    min-height: 100vh;\n}\n\n/* Center with gap between items */\n.center-with-gap {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    gap: 1rem;\n    flex-wrap: wrap;\n}",
+            "category": "Layout",
+            "favorite": false,
+            "created": "2024-01-20"
+        },
+        {
+            "id": "snip_5",
+            "title": "SQL Select with Join",
+            "language": "sql",
+            "code": "-- Get all orders with customer info\nSELECT \n    o.id AS order_id,\n    o.order_date,\n    o.total_amount,\n    c.first_name,\n    c.last_name,\n    c.email\nFROM orders o\nINNER JOIN customers c ON o.customer_id = c.id\nWHERE o.status = 'completed'\nORDER BY o.order_date DESC\nLIMIT 10;",
+            "category": "Database",
+            "favorite": true,
+            "created": "2024-03-01"
+        }
+    ],
+    "notes": [
+        {
+            "id": "note_1",
+            "title": "API Integration Checklist",
+            "content": "# API Integration Checklist\n\n## Pre-integration\n- [ ] Review API documentation\n- [ ] Get API keys/credentials\n- [ ] Test endpoints in Postman\n- [ ] Set up environment variables\n\n## Implementation\n- [ ] Create API service class\n- [ ] Implement authentication\n- [ ] Add error handling\n- [ ] Write unit tests\n\n## Post-integration\n- [ ] Monitor API usage\n- [ ] Set up rate limiting\n- [ ] Document integration",
+            "category": "Development",
+            "tags": ["api", "checklist"],
+            "pinned": true,
+            "favorite": true,
+            "created": "2024-03-10",
+            "updated": "2024-03-15"
+        },
+        {
+            "id": "note_2",
+            "title": "Meeting Notes - Sprint Planning",
+            "content": "# Sprint Planning - March 2024\n\n## Attendees\n- Development Team\n- Product Owner\n- Scrum Master\n\n## Goals\n1. Complete user authentication module\n2. Implement payment gateway\n3. Fix critical bugs from last sprint\n\n## Action Items\n- John: Setup CI/CD pipeline\n- Sarah: Design database schema\n- Mike: Create API endpoints",
+            "category": "Meetings",
+            "tags": ["meeting", "sprint"],
+            "pinned": false,
+            "favorite": false,
+            "created": "2024-03-05",
+            "updated": "2024-03-05"
+        },
+        {
+            "id": "note_3",
+            "title": "Code Review Guidelines",
+            "content": "# Code Review Guidelines\n\n## What to Look For\n\n### Functionality\n- Does the code work as expected?\n- Are edge cases handled?\n- Is error handling adequate?\n\n### Code Quality\n- Is the code readable?\n- Are naming conventions followed?\n- Is there unnecessary complexity?\n\n### Security\n- Are inputs validated?\n- Is sensitive data protected?\n- Are there SQL injection risks?\n\n### Performance\n- Are there obvious inefficiencies?\n- Is database querying optimized?",
+            "category": "Development",
+            "tags": ["code-review", "guidelines"],
+            "pinned": true,
+            "favorite": true,
+            "created": "2024-02-20",
+            "updated": "2024-03-01"
+        }
+    ],
+    "tasks": [
+        {
+            "id": "task_1",
+            "projectId": "proj_1",
+            "title": "Implement shopping cart",
+            "description": "Create persistent shopping cart functionality",
+            "status": "in-progress",
+            "priority": "high",
+            "dueDate": "2024-03-25",
+            "created": "2024-03-10"
+        },
+        {
+            "id": "task_2",
+            "projectId": "proj_1",
+            "title": "Add payment gateway",
+            "description": "Integrate Stripe payment processing",
+            "status": "todo",
+            "priority": "high",
+            "dueDate": "2024-03-30",
+            "created": "2024-03-12"
+        },
+        {
+            "id": "task_3",
+            "projectId": "proj_2",
+            "title": "Design ticket UI",
+            "description": "Create responsive ticket view component",
+            "status": "done",
+            "priority": "medium",
+            "dueDate": "2024-03-15",
+            "created": "2024-03-01"
+        },
+        {
+            "id": "task_4",
+            "projectId": "proj_3",
+            "title": "Setup webhook handlers",
+            "description": "Implement Telegram webhook processing",
+            "status": "todo",
+            "priority": "medium",
+            "dueDate": "2024-03-28",
+            "created": "2024-03-14"
+        }
+    ],
+    "environments": [
+        {
+            "id": "env_1",
+            "projectId": "proj_1",
+            "name": "Development",
+            "variables": [
+                {"key": "APP_ENV", "value": "development", "sensitive": false},
+                {"key": "APP_DEBUG", "value": "true", "sensitive": false},
+                {"key": "DB_HOST", "value": "localhost", "sensitive": false},
+                {"key": "DB_NAME", "value": "myshop_dev", "sensitive": false},
+                {"key": "DB_USER", "value": "root", "sensitive": false},
+                {"key": "DB_PASS", "value": "secret123", "sensitive": true},
+                {"key": "API_URL", "value": "http://localhost:8000/api", "sensitive": false}
+            ]
+        },
+        {
+            "id": "env_2",
+            "projectId": "proj_1",
+            "name": "Production",
+            "variables": [
+                {"key": "APP_ENV", "value": "production", "sensitive": false},
+                {"key": "APP_DEBUG", "value": "false", "sensitive": false},
+                {"key": "DB_HOST", "value": "prod-db.example.com", "sensitive": false},
+                {"key": "DB_NAME", "value": "myshop_prod", "sensitive": false},
+                {"key": "DB_USER", "value": "myshop_user", "sensitive": false},
+                {"key": "DB_PASS", "value": "super_secret_prod_pass", "sensitive": true},
+                {"key": "API_URL", "value": "https://api.myshop.com", "sensitive": false}
+            ]
+        }
+    ],
+    "bookmarks": [
+        {"id": "bm_1", "projectId": "proj_1", "title": "Stripe Documentation", "url": "https://stripe.com/docs"},
+        {"id": "bm_2", "projectId": "proj_1", "title": "MySQL Reference", "url": "https://dev.mysql.com/doc/"},
+        {"id": "bm_3", "projectId": "proj_2", "title": "MongoDB Docs", "url": "https://docs.mongodb.com/"},
+        {"id": "bm_4", "projectId": "proj_3", "title": "Telegram Bot API", "url": "https://core.telegram.org/bots/api"}
+    ],
+    "changelogs": [
+        {
+            "id": "log_1",
+            "projectId": "proj_1",
+            "version": "1.2.0",
+            "date": "2024-03-15",
+            "changes": [
+                "Added product filtering",
+                "Improved search performance",
+                "Fixed cart calculation bug"
+            ]
+        },
+        {
+            "id": "log_2",
+            "projectId": "proj_1",
+            "version": "1.1.0",
+            "date": "2024-02-20",
+            "changes": [
+                "Implemented user authentication",
+                "Added admin dashboard",
+                "Updated dependencies"
+            ]
+        }
+    ],
+    "settings": {
+        "theme": "light",
+        "language": "en",
+        "sidebarCollapsed": false,
+        "fontSize": "medium",
+        "notifications": true
+    }
+}
