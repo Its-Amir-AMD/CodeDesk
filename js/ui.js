@@ -1,43 +1,47 @@
 import { Icon } from "./icons.js";
 import { t } from "./i18n.js";
 
+const esc = (value = "") => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+
 export function toast(type, title, message) {
   const root = document.getElementById("toasts");
+  if (!root) return;
   const el = document.createElement("div");
-  el.className = `toast toast-${type}`;
-  el.innerHTML = `<strong>${title}</strong><p>${message || ""}</p>`;
+  el.className = `toast toast-${esc(type)}`;
+  const strong = document.createElement("strong");
+  strong.textContent = title || "";
+  const p = document.createElement("p");
+  p.textContent = message || "";
+  el.append(strong, p);
   root.appendChild(el);
   setTimeout(() => el.remove(), 3200);
 }
 
 export function openModal({ title, body, onSubmit, submitLabel }) {
   const root = document.getElementById("modal-root");
+  if (!root) return;
   root.classList.add("is-open");
   root.innerHTML = `
     <div class="modal-backdrop" data-close></div>
-    <div class="modal" role="dialog">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="spread" style="margin-bottom:14px">
-        <h3>${title}</h3>
-        <button class="icon-btn" data-close>${Icon.close}</button>
+        <h3 id="modal-title">${esc(title)}</h3>
+        <button class="icon-btn" data-close aria-label="Close">${Icon.close}</button>
       </div>
       <form id="modal-form" class="stack">${body}
         <div class="row" style="justify-content:flex-end;margin-top:8px">
           <button type="button" class="btn btn-ghost" data-close></button>
-          <button class="btn btn-primary" type="submit">${submitLabel || "OK"}</button>
+          <button class="btn btn-primary" type="submit">${esc(submitLabel || "OK")}</button>
         </div>
       </form>
     </div>`;
   const cancel = root.querySelector(".btn-ghost");
   cancel.textContent = document.documentElement.lang === "fa" ? "لغو" : "Cancel";
-  const close = () => {
-    root.classList.remove("is-open");
-    root.innerHTML = "";
-  };
+  const close = () => { root.classList.remove("is-open"); root.innerHTML = ""; };
   root.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", close));
   root.querySelector("#modal-form").addEventListener("submit", (e) => {
     e.preventDefault();
-    const fd = new FormData(e.target);
-    const data = Object.fromEntries(fd.entries());
+    const data = Object.fromEntries(new FormData(e.target).entries());
     onSubmit(data, close);
   });
 }
@@ -47,11 +51,8 @@ export function confirmDialog(message) {
     openModal({
       title: document.documentElement.lang === "fa" ? "تأیید" : "Confirm",
       submitLabel: document.documentElement.lang === "fa" ? "حذف" : "Delete",
-      body: `<p>${message}</p>`,
-      onSubmit(_, close) {
-        close();
-        resolve(true);
-      },
+      body: `<p>${esc(message)}</p>`,
+      onSubmit(_, close) { close(); resolve(true); },
     });
   });
 }
@@ -82,61 +83,23 @@ export function openCommand(lang, onPick) {
   const render = () => {
     const q = filter.toLowerCase();
     const list = items.filter((i) => i.label.toLowerCase().includes(q));
-    if (active >= list.length) active = list.length - 1;
-    if (active < 0) active = 0;
+    if (active >= list.length) active = Math.max(0, list.length - 1);
     root.classList.add("is-open");
-    root.innerHTML = `
-      <div class="modal-backdrop" data-close></div>
-      <div class="cmd" role="dialog">
-        <input id="cmd-input" placeholder="${t(lang, "command")}..." />
-        <div class="cmd-list">
-          ${list
-            .map(
-              (i, idx) =>
-                `<button class="cmd-item ${idx === active ? "is-active" : ""}" data-id="${i.id}"><span>${i.label}</span><span class="hint">${i.hint || ""}</span></button>`
-            )
-            .join("") || `<div class="empty">${t(lang, "empty")}</div>`}
-        </div>
-      </div>`;
+    root.innerHTML = `<div class="modal-backdrop" data-close></div><div class="cmd" role="dialog" aria-modal="true"><input id="cmd-input" aria-label="${esc(t(lang, "command"))}" placeholder="${esc(t(lang, "command"))}..." /><div class="cmd-list">${list.map((i, idx) => `<button class="cmd-item ${idx === active ? "is-active" : ""}" data-id="${esc(i.id)}"><span>${esc(i.label)}</span><span class="hint">${esc(i.hint || "")}</span></button>`).join("") || `<div class="empty">${esc(t(lang, "empty"))}</div>`}</div></div>`;
     const input = root.querySelector("#cmd-input");
     input.value = filter;
     input.focus();
-    input.addEventListener("input", () => {
-      filter = input.value;
-      render();
-    });
+    input.addEventListener("input", () => { filter = input.value; render(); });
     root.querySelector("[data-close]").addEventListener("click", close);
-    root.querySelectorAll(".cmd-item").forEach((el) =>
-      el.addEventListener("click", () => {
-        onPick(el.dataset.id);
-        close();
-      })
-    );
+    root.querySelectorAll(".cmd-item").forEach((el) => el.addEventListener("click", () => { onPick(el.dataset.id); close(); }));
     input.addEventListener("keydown", (e) => {
       const listNow = items.filter((i) => i.label.toLowerCase().includes(filter.toLowerCase()));
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        active = Math.min(listNow.length - 1, active + 1);
-        render();
-      }
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        active = Math.max(0, active - 1);
-        render();
-      }
-      if (e.key === "Enter") {
-        e.preventDefault();
-        if (listNow[active]) {
-          onPick(listNow[active].id);
-          close();
-        }
-      }
+      if (e.key === "ArrowDown") { e.preventDefault(); active = Math.min(Math.max(0, listNow.length - 1), active + 1); render(); }
+      if (e.key === "ArrowUp") { e.preventDefault(); active = Math.max(0, active - 1); render(); }
+      if (e.key === "Enter") { e.preventDefault(); if (listNow[active]) { onPick(listNow[active].id); close(); } }
       if (e.key === "Escape") close();
     });
   };
-  const close = () => {
-    root.classList.remove("is-open");
-    root.innerHTML = "";
-  };
+  const close = () => { root.classList.remove("is-open"); root.innerHTML = ""; };
   render();
 }
