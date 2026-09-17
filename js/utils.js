@@ -1,12 +1,14 @@
 export const uid = (p = "id") => p + "-" + Math.random().toString(36).slice(2, 9);
 export const qs = (s, el = document) => el.querySelector(s);
 export const qsa = (s, el = document) => [...el.querySelectorAll(s)];
-export const escapeHtml = (str = "") =>
-  String(str)
-    .replaceAll("&", "&")
-    .replaceAll("<", "<")
-    .replaceAll(">", ">")
-    .replaceAll('"', """);
+export const escapeHtml = (str = "") => {
+  const amp = String.fromCharCode(38);
+  return String(str)
+    .split(amp).join(amp + "amp;")
+    .split("<").join(amp + "lt;")
+    .split(">").join(amp + "gt;")
+    .split('"').join(amp + "quot;");
+};
 
 export function debounce(fn, ms = 180) {
   let t;

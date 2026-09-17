@@ -294,8 +294,22 @@ export const encoders = {
   b64d: (s) => decodeURIComponent(escape(atob(s))),
   urle: (s) => encodeURIComponent(s),
   urld: (s) => decodeURIComponent(s),
-  htmle: (s) => s.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """),
-  htmld: (s) => s.replace(/"/g, '"').replace(/</g, "<").replace(/>/g, ">").replace(/&/g, "&"),
+  htmle: (s) => {
+    const amp = String.fromCharCode(38);
+    return s
+      .split(amp).join(amp + "amp;")
+      .split("<").join(amp + "lt;")
+      .split(">").join(amp + "gt;")
+      .split('"').join(amp + "quot;");
+  },
+  htmld: (s) => {
+    const amp = String.fromCharCode(38);
+    return s
+      .split(amp + "quot;").join('"')
+      .split(amp + "lt;").join("<")
+      .split(amp + "gt;").join(">")
+      .split(amp + "amp;").join(amp);
+  },
 };
 
 export function randomString(len = 16, alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") {
