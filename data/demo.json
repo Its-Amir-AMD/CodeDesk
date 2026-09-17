@@ -1,0 +1,183 @@
+{
+  "user": { "name": "Amir", "role": "Full-stack developer", "plan": "Workspace" },
+  "projects": [
+    {
+      "id": "myshop",
+      "name": "MyShop",
+      "description": "فروشگاه آنلاین با سبد خرید، درگاه پرداخت و پنل مدیریت موجودی.",
+      "tech": ["PHP", "MySQL", "JavaScript"],
+      "status": "active",
+      "created": "2026-03-12",
+      "updated": "2026-09-14",
+      "tags": ["ecommerce", "api", "php"]
+    },
+    {
+      "id": "userdesk",
+      "name": "UserDesk",
+      "description": "داشبورد کاربران با احراز هویت، نقش‌ها و گزارش فعالیت.",
+      "tech": ["HTML", "CSS", "JavaScript"],
+      "status": "in-progress",
+      "created": "2026-05-02",
+      "updated": "2026-09-10",
+      "tags": ["dashboard", "auth"]
+    },
+    {
+      "id": "ballebot",
+      "name": "BalleBot",
+      "description": "ربات تلگرام برای اطلاع‌رسانی سفارش و پاسخ خودکار پشتیبانی.",
+      "tech": ["Python"],
+      "status": "active",
+      "created": "2026-01-20",
+      "updated": "2026-09-08",
+      "tags": ["bot", "telegram", "python"]
+    },
+    {
+      "id": "portfolio",
+      "name": "Portfolio",
+      "description": "سایت شخصی نمونه کارها با صفحات پروژه و فرم تماس.",
+      "tech": ["HTML", "CSS", "JavaScript"],
+      "status": "done",
+      "created": "2025-11-04",
+      "updated": "2026-08-22",
+      "tags": ["personal", "frontend"]
+    }
+  ],
+  "snippets": [
+    {
+      "id": "s1",
+      "title": "PDO query helper",
+      "language": "PHP",
+      "category": "database",
+      "favorite": true,
+      "projectId": "myshop",
+      "code": "function db_query(PDO $pdo, string $sql, array $params = []): array {\n    $stmt = $pdo->prepare($sql);\n    $stmt->execute($params);\n    return $stmt->fetchAll(PDO::FETCH_ASSOC);\n}"
+    },
+    {
+      "id": "s2",
+      "title": "Fetch JSON helper",
+      "language": "JavaScript",
+      "category": "http",
+      "favorite": true,
+      "projectId": "userdesk",
+      "code": "export async function getJson(url, options = {}) {\n  const res = await fetch(url, { headers: { Accept: 'application/json' }, ...options });\n  if (!res.ok) throw new Error(res.status + ' ' + res.statusText);\n  return res.json();\n}"
+    },
+    {
+      "id": "s3",
+      "title": "Telegram send message",
+      "language": "Python",
+      "category": "bot",
+      "favorite": false,
+      "projectId": "ballebot",
+      "code": "import requests\n\ndef send_message(token: str, chat_id: str, text: str) -> dict:\n    url = f\"https://api.telegram.org/bot{token}/sendMessage\"\n    r = requests.post(url, json={\"chat_id\": chat_id, \"text\": text})\n    r.raise_for_status()\n    return r.json()"
+    },
+    {
+      "id": "s4",
+      "title": "Responsive grid",
+      "language": "CSS",
+      "category": "layout",
+      "favorite": false,
+      "projectId": "portfolio",
+      "code": ".grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));\n  gap: 16px;\n}"
+    },
+    {
+      "id": "s5",
+      "title": "Users table",
+      "language": "SQL",
+      "category": "database",
+      "favorite": true,
+      "projectId": "myshop",
+      "code": "CREATE TABLE users (\n  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,\n  email VARCHAR(190) NOT NULL UNIQUE,\n  name VARCHAR(120) NOT NULL,\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);"
+    },
+    {
+      "id": "s6",
+      "title": "Order payload",
+      "language": "JSON",
+      "category": "api",
+      "favorite": false,
+      "projectId": "myshop",
+      "code": "{\n  \"orderId\": 1842,\n  \"status\": \"paid\",\n  \"items\": [{ \"sku\": \"TSHIRT-BLU\", \"qty\": 2 }]\n}"
+    },
+    {
+      "id": "s7",
+      "title": "Hero markup",
+      "language": "HTML",
+      "category": "ui",
+      "favorite": false,
+      "projectId": "portfolio",
+      "code": "<section class=\"hero\">\n  <h1>CodeDesk</h1>\n  <p>Your Developer Workspace</p>\n</section>"
+    },
+    {
+      "id": "s8",
+      "title": "Hash password",
+      "language": "Java",
+      "category": "security",
+      "favorite": false,
+      "projectId": "userdesk",
+      "code": "import java.security.MessageDigest;\n\npublic static String sha256(String input) throws Exception {\n    MessageDigest md = MessageDigest.getInstance(\"SHA-256\");\n    byte[] hash = md.digest(input.getBytes(\"UTF-8\"));\n    StringBuilder sb = new StringBuilder();\n    for (byte b : hash) sb.append(String.format(\"%02x\", b));\n    return sb.toString();\n}"
+    }
+  ],
+  "notes": [
+    {
+      "id": "n1",
+      "title": "MyShop payment checklist",
+      "body": "1. Verify callback signature\n2. Idempotent order update\n3. Send receipt email\n4. Log gateway payload",
+      "tags": ["myshop", "payments"],
+      "category": "work",
+      "pinned": true,
+      "favorite": true,
+      "updated": "2026-09-14"
+    },
+    {
+      "id": "n2",
+      "title": "Regex for emails",
+      "body": "Use a conservative pattern in forms:\n^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$",
+      "tags": ["regex"],
+      "category": "reference",
+      "pinned": false,
+      "favorite": false,
+      "updated": "2026-09-01"
+    },
+    {
+      "id": "n3",
+      "title": "BalleBot commands",
+      "body": "/start welcome\n/order {id}\n/help support hours 9-18",
+      "tags": ["ballebot"],
+      "category": "product",
+      "pinned": true,
+      "favorite": false,
+      "updated": "2026-08-28"
+    }
+  ],
+  "tasks": [
+    { "id": "t1", "projectId": "myshop", "title": "Add coupon API", "status": "todo", "priority": "high", "due": "2026-09-22" },
+    { "id": "t2", "projectId": "myshop", "title": "Stock webhook", "status": "in-progress", "priority": "medium", "due": "2026-09-19" },
+    { "id": "t3", "projectId": "myshop", "title": "Order export CSV", "status": "done", "priority": "low", "due": "2026-09-10" },
+    { "id": "t4", "projectId": "userdesk", "title": "Role matrix UI", "status": "in-progress", "priority": "high", "due": "2026-09-25" },
+    { "id": "t5", "projectId": "ballebot", "title": "Retry failed sends", "status": "todo", "priority": "medium", "due": "2026-09-20" },
+    { "id": "t6", "projectId": "portfolio", "title": "Case study: MyShop", "status": "done", "priority": "low", "due": "2026-08-20" }
+  ],
+  "envs": [
+    { "id": "e1", "projectId": "myshop", "key": "APP_ENV", "value": "development", "secret": false },
+    { "id": "e2", "projectId": "myshop", "key": "API_URL", "value": "http://localhost:8080", "secret": false },
+    { "id": "e3", "projectId": "myshop", "key": "DB_HOST", "value": "localhost", "secret": false },
+    { "id": "e4", "projectId": "myshop", "key": "DB_NAME", "value": "myshop", "secret": false },
+    { "id": "e5", "projectId": "myshop", "key": "DB_PASSWORD", "value": "s3cret-demo", "secret": true },
+    { "id": "e6", "projectId": "ballebot", "key": "BOT_TOKEN", "value": "123456:demo-token", "secret": true }
+  ],
+  "bookmarks": [
+    { "id": "b1", "projectId": "myshop", "title": "Payment docs", "url": "https://developer.mozilla.org/" },
+    { "id": "b2", "projectId": "userdesk", "title": "JSONPlaceholder", "url": "https://jsonplaceholder.typicode.com/" }
+  ],
+  "changelog": [
+    { "id": "c1", "projectId": "myshop", "date": "2026-09-14", "text": "Added inventory reservation on checkout." },
+    { "id": "c2", "projectId": "myshop", "date": "2026-09-02", "text": "Introduced coupon codes." },
+    { "id": "c3", "projectId": "ballebot", "date": "2026-09-08", "text": "Queued outbound messages." }
+  ],
+  "activity": [
+    { "id": "a1", "text": "Updated snippet PDO query helper", "time": "2026-09-16 18:12" },
+    { "id": "a2", "text": "Ran API Lab against /posts/1", "time": "2026-09-16 16:40" },
+    { "id": "a3", "text": "Formatted checkout JSON", "time": "2026-09-15 11:05" },
+    { "id": "a4", "text": "Pinned note: payment checklist", "time": "2026-09-14 09:22" }
+  ],
+  "favorites": ["json", "api", "regex", "snippets"]
+}
