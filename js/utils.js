@@ -70,3 +70,10 @@ export function uuid() {
     return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 }
+
+export function randomString(len = 16, alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") {
+  let o = "";
+  const arr = crypto.getRandomValues(new Uint32Array(len));
+  for (let i = 0; i < len; i++) o += alphabet[arr[i] % alphabet.length];
+  return o;
+}
