@@ -1,6 +1,7 @@
 import { uid, today, nowStamp } from "./utils.js";
 
 const KEY = "codedesk.v1";
+const API_KEY = KEY + ".api";
 
 const defaultSettings = {
   theme: "dark",
@@ -16,23 +17,39 @@ function clone(v) {
   return JSON.parse(JSON.stringify(v));
 }
 
-export function createStore(seed) {
-  let state;
+function readJson(key, fallback) {
   try {
-    const raw = localStorage.getItem(KEY);
-    state = raw ? JSON.parse(raw) : null;
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
   } catch {
-    state = null;
+    return fallback;
   }
-  if (!state || !state.projects) {
+}
+
+function writeJson(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function createStore(seed) {
+  let state = readJson(KEY, null);
+  if (!state || !Array.isArray(state.projects)) {
     state = { ...clone(seed), settings: { ...defaultSettings } };
   } else {
+    state = { ...clone(seed), ...state };
     state.settings = { ...defaultSettings, ...(state.settings || {}) };
+    for (const key of ["projects", "snippets", "notes", "tasks", "envs", "bookmarks", "changelog", "activity"]) {
+      if (!Array.isArray(state[key])) state[key] = [];
+    }
   }
 
   const listeners = new Set();
   const persist = () => {
-    localStorage.setItem(KEY, JSON.stringify(state));
+    writeJson(KEY, state);
     listeners.forEach((fn) => fn(state));
   };
 
@@ -47,12 +64,11 @@ export function createStore(seed) {
       persist();
     },
     touchTool(id) {
-      const r = [id, ...(state.settings.recentTools || []).filter((x) => x !== id)].slice(0, 6);
-      state.settings.recentTools = r;
+      state.settings.recentTools = [id, ...(state.settings.recentTools || []).filter((x) => x !== id)].slice(0, 6);
       persist();
     },
     log(text) {
-      state.activity = [{ id: uid("a"), text, time: nowStamp() }, ...(state.activity || [])].slice(0, 40);
+      state.activity = [{ id: uid("a"), text: String(text), time: nowStamp() }, ...(state.activity || [])].slice(0, 40);
       persist();
     },
     reset(seedData) {
@@ -60,18 +76,9 @@ export function createStore(seed) {
       persist();
     },
     addProject(p) {
-      const item = {
-        id: uid("p"),
-        created: today(),
-        updated: today(),
-        status: "active",
-        tech: [],
-        tags: [],
-        ...p,
-      };
+      const item = { id: uid("p"), created: today(), updated: today(), status: "active", tech: [], tags: [], ...p };
       state.projects.unshift(item);
       this.log("Created project " + item.name);
-      persist();
       return item;
     },
     updateProject(id, patch) {
@@ -84,13 +91,15 @@ export function createStore(seed) {
       state.projects = state.projects.filter((x) => x.id !== id);
       state.tasks = state.tasks.filter((x) => x.projectId !== id);
       state.envs = state.envs.filter((x) => x.projectId !== id);
+      state.bookmarks = state.bookmarks.filter((x) => x.projectId !== id);
+      state.changelog = state.changelog.filter((x) => x.projectId !== id);
+      state.snippets = state.snippets.map((x) => x.projectId === id ? { ...x, projectId: null } : x);
       persist();
     },
     addSnippet(s) {
       const item = { id: uid("s"), favorite: false, category: "general", ...s };
       state.snippets.unshift(item);
       this.log("Created snippet " + item.title);
-      persist();
       return item;
     },
     updateSnippet(id, patch) {
@@ -104,15 +113,7 @@ export function createStore(seed) {
       persist();
     },
     addNote(n) {
-      const item = {
-        id: uid("n"),
-        pinned: false,
-        favorite: false,
-        tags: [],
-        category: "general",
-        updated: today(),
-        ...n,
-      };
+      const item = { id: uid("n"), pinned: false, favorite: false, tags: [], category: "general", updated: today(), ...n };
       state.notes.unshift(item);
       persist();
       return item;
@@ -157,6 +158,7 @@ export function createStore(seed) {
       const item = { id: uid("b"), ...b };
       state.bookmarks.unshift(item);
       persist();
+      return item;
     },
     deleteBookmark(id) {
       state.bookmarks = state.bookmarks.filter((x) => x.id !== id);
@@ -174,10 +176,10 @@ export function createStore(seed) {
       persist();
     },
     apiHistory: {
-      list: () => JSON.parse(localStorage.getItem(KEY + ".api") || "[]"),
+      list: () => readJson(API_KEY, []),
       push(item) {
-        const list = [item, ...JSON.parse(localStorage.getItem(KEY + ".api") || "[]")].slice(0, 30);
-        localStorage.setItem(KEY + ".api", JSON.stringify(list));
+        const list = [item, ...readJson(API_KEY, [])].slice(0, 30);
+        writeJson(API_KEY, list);
       },
     },
   };
