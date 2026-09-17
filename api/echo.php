@@ -11,6 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+$maxBytes = 1024 * 1024;
+$length = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+if ($length > $maxBytes) {
+    http_response_code(413);
+    echo json_encode(['ok' => false, 'error' => 'Request body is too large'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $raw = file_get_contents('php://input') ?: '';
 $jsonBody = json_decode($raw, true);
@@ -27,10 +35,10 @@ $response = [
     'ok' => true,
     'app' => 'CodeDesk',
     'method' => $method,
-    'path' => $_SERVER['REQUEST_URI'] ?? '/',
+    'path' => parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
     'query' => $_GET,
     'headers' => $headers,
-    'body' => $jsonBody === null ? $raw : $jsonBody,
+    'body' => json_last_error() === JSON_ERROR_NONE && $raw !== '' ? $jsonBody : $raw,
     'receivedAt' => gmdate('c'),
 ];
 
